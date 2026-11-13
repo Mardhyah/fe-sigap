@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Styles */
+:root {
+  --brand-green: #0a5c36;
+  --brand-green-hover: #074729;
+  
+  /* Background */
+  --bg-app: #f4f8fc;
+  --bg-card: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-navbar: #ffffff;
+  
+  /* Teks */
+  --text-title: #0a1d37;
+  --text-dark: #0f172a;
+  --text-slate: #1e293b;
+  --text-muted: #64748b;
+  --border-light: #e2e8f0;
+
+  /* Badge */
+  --badge-internal-bg: #e2e8f0;
+  --badge-internal-text: #475569;
+  
+  --badge-rapat-bg: #dbeafe;
+  --badge-rapat-text: #2563eb;
+  
+  --badge-audiensi-bg: #dcfce7;
+  --badge-audiensi-text: #16a34a;
+  
+  --badge-program-bg: #fef3c7;
+  --badge-program-text: #d97706;
+  
+  --badge-pertemuan-bg: #fee2e2;
+  --badge-pertemuan-text: #dc2626;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-dark);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}

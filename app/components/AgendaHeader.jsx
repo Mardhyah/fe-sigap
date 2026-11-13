@@ -33,7 +33,7 @@ export default function AgendaHeader({
             onClick={onOpenAdd}
           >
             <Plus size={15} strokeWidth={2.5} />
-            <span>Tambah Agenda</span>
+            <span>Tambahh Agenda</span>
           </button>
         )}
 

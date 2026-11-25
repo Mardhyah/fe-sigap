@@ -59,3 +59,16 @@ html, body {
 button, input, select, textarea {
   font-family: inherit;
 }
+
+@keyframes flowProgress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-flow-progress {
+  animation: flowProgress 1s cubic-bezier(0.2, 0, 0.4, 1) forwards;
+}

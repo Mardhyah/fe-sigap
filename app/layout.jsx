@@ -1,8 +1,8 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'Dashboard Agenda Pimpinan',
-  description: 'Aplikasi Agenda Harian dan Mingguan Pimpinan',
+  title: 'Dashboard Agenda',
+  description: 'Aplikasi Agenda Harian',
 };
 
 export default function RootLayout({ children }) {

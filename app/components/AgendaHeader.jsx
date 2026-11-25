@@ -1,9 +1,9 @@
 import { Plus, Maximize, ChevronLeft, ChevronRight, Calendar, ChevronDown } from 'lucide-react';
 
 export default function AgendaHeader({ 
-  currentDate = "Jumat, 30 Oktober 2026", 
+  currentDate = '', 
   liveClock,
-  activeView = "harian", 
+  activeView = 'harian', 
   onViewChange,
   onOpenAdd,
   showAddButton = true,
@@ -33,7 +33,7 @@ export default function AgendaHeader({
             onClick={onOpenAdd}
           >
             <Plus size={15} strokeWidth={2.5} />
-            <span>Tambahh Agenda</span>
+            <span>Tambah Agenda</span>
           </button>
         )}
 

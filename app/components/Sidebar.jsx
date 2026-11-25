@@ -17,7 +17,7 @@ const menuItems = [
   { 
     id: 'dashboard', 
     label: 'Dashboard Monitor', 
-    href: '/dashboard',
+    href: 'https://agenda.baznasbazisdki.id/',
     icon: <LayoutDashboard size={18} />
   }
 ];
@@ -30,10 +30,13 @@ export default function Sidebar({ activeMenu, onSelectMenu }) {
       <nav className="flex flex-col gap-1">
         {menuItems.map((item) => {
           const isActive = pathname === item.href || (activeMenu && item.id === activeMenu);
+          const isExternal = item.href.startsWith('http');
           return (
             <Link
               key={item.id}
               href={item.href}
+              target={isExternal ? '_blank' : undefined}
+              rel={isExternal ? 'noopener noreferrer' : undefined}
               className={`flex items-center gap-3 w-full py-2.5 px-3.5 rounded-lg text-[0.88rem] transition-all duration-150 no-underline ${
                 isActive 
                   ? 'bg-brand-green text-white font-semibold shadow-[0_2px_4px_rgba(10,92,54,0.2)]' 

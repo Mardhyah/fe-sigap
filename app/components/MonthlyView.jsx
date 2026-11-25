@@ -14,18 +14,7 @@ import {
 } from 'lucide-react';
 import { DAYS, MONTHS } from '../../lib/timeUtils';
 
-const CHIP_STYLES = {
-  rapat: 'bg-[#eff6ff] border-[#dbeafe] text-[#1d4ed8]',
-  audiensi: 'bg-[#f0fdf4] border-[#dcfce7] text-[#15803d]',
-  program: 'bg-[#fffbeb] border-[#fef3c7] text-[#b45309]',
-  pertemuan: 'bg-[#fef2f2] border-[#fee2e2] text-[#b91c1c]',
-  internal: 'bg-[#f8fafc] border-[#e2e8f0] text-[#475569]'
-};
-
-/** Nama hari mulai Senin (untuk header kolom grid bulanan) */
 const DAYS_GRID_LONG = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-
-// (Data agenda ditampilkan dari API melalui props agendas)
 
 export default function MonthlyView({
   agendas = [],
@@ -41,7 +30,7 @@ export default function MonthlyView({
   const [dayModal, setDayModal] = useState(null);
   const [detailModal, setDetailModal] = useState(null);
 
-  // Daftar kategori legenda dinamis dari DB / agenda
+  // Legenda kategori
   const legendList = useMemo(() => {
     const map = new Map();
     if (categories && categories.length > 0) {
@@ -87,11 +76,10 @@ export default function MonthlyView({
     setSelectedDay(now.getDate());
   };
 
-  // Buat index agenda per tanggal dari data real DB
+  // Index agenda per tanggal
   const agendaByDate = useMemo(() => {
     const map = {};
     agendas.forEach((a) => {
-      if (a.isBreak) return;
       let y, m, d;
       if (a.dateKey) {
         const parts = a.dateKey.split('-');
@@ -107,7 +95,6 @@ export default function MonthlyView({
       } else {
         return;
       }
-      // Key: "YYYY-M-D" (zero-indexed month)
       const key = `${y}-${m}-${d}`;
       if (!map[key]) map[key] = [];
       map[key].push(a);
@@ -115,13 +102,12 @@ export default function MonthlyView({
     return map;
   }, [agendas]);
 
-  // Ambil agenda per tanggal di bulan yang sedang ditampilkan
   const getEventsForDay = (d) => {
     const key = `${viewYear}-${viewMonth}-${d}`;
     return agendaByDate[key] || [];
   };
 
-  // Perhitungan grid tanggal
+  // Grid kalender
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
   const daysInPrevMonth = new Date(viewYear, viewMonth, 0).getDate();
   const firstDayRaw = new Date(viewYear, viewMonth, 1).getDay();
@@ -200,7 +186,6 @@ export default function MonthlyView({
           if (e.deltaY < -20) handlePrevMonth();
           else if (e.deltaY > 20) handleNextMonth();
         }}
-        title="Scroll mouse wheel di header ini untuk berganti bulan"
       >
         <div className="flex items-center gap-3">
           <span className="text-[1.15rem] font-bold text-slate-900 min-w-[150px]">
@@ -212,7 +197,6 @@ export default function MonthlyView({
               className="inline-flex items-center justify-center w-[30px] h-[30px] rounded-md border border-slate-300 bg-white text-slate-600 cursor-pointer transition-all hover:bg-slate-100 hover:border-slate-400 hover:text-slate-900" 
               aria-label="Bulan Sebelumnya"
               onClick={handlePrevMonth}
-              title="Bulan Sebelumnya"
             >
               <ChevronLeft size={15} />
             </button>
@@ -221,7 +205,6 @@ export default function MonthlyView({
               className="inline-flex items-center justify-center w-[30px] h-[30px] rounded-md border border-slate-300 bg-white text-slate-600 cursor-pointer transition-all hover:bg-slate-100 hover:border-slate-400 hover:text-slate-900" 
               aria-label="Bulan Berikutnya"
               onClick={handleNextMonth}
-              title="Bulan Berikutnya"
             >
               <ChevronRight size={15} />
             </button>
@@ -235,7 +218,7 @@ export default function MonthlyView({
           </button>
         </div>
 
-        {/* Legend */}
+        {/* Legenda */}
         <div className="flex items-center gap-3.5 text-[0.74rem] text-slate-500 flex-wrap">
           {legendList.map((item) => (
             <div key={item.label} className="flex items-center gap-1.5">
@@ -298,11 +281,10 @@ export default function MonthlyView({
                 )}
               </div>
 
-              {/* Chip Agenda */}
+              {/* Daftar Kegiatan Hari Ini */}
               <div className="flex flex-col gap-1 overflow-hidden">
                 {visibleEvents.map((evt) => {
-                  const startTime = evt.time ? evt.time.split(' - ')[0] : '09.00';
-                  const chipClass = CHIP_STYLES[evt.categoryType || 'internal'] || CHIP_STYLES.internal;
+                  const startTime = evt.time ? evt.time.split(' - ')[0] : '';
                   return (
                     <div
                       key={evt.id}
@@ -318,13 +300,12 @@ export default function MonthlyView({
                       }}
                       title={`${evt.time} | ${evt.title}`}
                     >
-                      <span className="font-bold text-[0.68rem] opacity-85 shrink-0 text-inherit">{startTime}</span>
+                      {startTime && <span className="font-bold text-[0.68rem] opacity-85 shrink-0 text-inherit">{startTime}</span>}
                       <span className="font-semibold text-inherit truncate">{evt.title}</span>
                     </div>
                   );
                 })}
 
-                {/* Agenda Lainnya */}
                 {hiddenCount > 0 && (
                   <div 
                     className="text-[0.68rem] font-bold text-brand-green py-0.5 px-1.5 text-left rounded bg-emerald-50 cursor-pointer inline-block transition-all hover:bg-emerald-100 hover:underline"
@@ -362,7 +343,7 @@ export default function MonthlyView({
               </button>
             </div>
 
-            {/* Daftar Agenda */}
+            {/* List Agenda */}
             <div className="flex-1 min-h-0 overflow-y-auto max-h-[500px] p-[8px_18px_14px] flex flex-col">
               {dayModal.events.map((evt) => (
                 <div
@@ -370,17 +351,15 @@ export default function MonthlyView({
                   className="group p-[13px_12px] border-b border-slate-100 last:border-b-0 rounded-lg cursor-pointer transition-all flex items-center gap-[18px] hover:bg-slate-50"
                   onClick={() => openDetailModal(evt, dayModal.day)}
                 >
-                  {/* Kolom Waktu */}
                   <div className="min-w-[105px] shrink-0 flex flex-col items-start gap-0.5">
                     <span className="text-[0.86rem] font-bold text-slate-900 tracking-tight whitespace-nowrap">
-                      {evt.time || '09.00 - 10.00'}
+                      {evt.time || '-'}
                     </span>
                     {evt.duration && (
                       <span className="text-[0.7rem] font-medium text-slate-500 whitespace-nowrap">{evt.duration}</span>
                     )}
                   </div>
 
-                  {/* Konten Agenda */}
                   <div className="flex-1 min-w-0 flex flex-col gap-1">
                     <div className="flex items-start gap-2">
                       <span 
@@ -411,7 +390,6 @@ export default function MonthlyView({
                     </div>
                   </div>
 
-                  {/* Aksi */}
                   <div className="text-slate-300 flex items-center shrink-0 transition-all group-hover:text-brand-green group-hover:translate-x-1">
                     <ArrowIcon size={16} />
                   </div>
@@ -459,7 +437,6 @@ export default function MonthlyView({
             className="bg-white rounded-xl w-[680px] max-w-[min(680px,95vw)] max-h-[88vh] shadow-[0_20px_25px_-5px_rgba(0,0,0,0.12),0_10px_10px_-5px_rgba(0,0,0,0.04)] border border-slate-200 flex flex-col overflow-hidden" 
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
             <div className="p-[14px_20px] bg-slate-50 border-b border-slate-200 flex items-center justify-between">
               <span 
                 className="text-[0.68rem] font-bold py-0.5 px-2 rounded uppercase" 
@@ -468,7 +445,7 @@ export default function MonthlyView({
                   color: detailModal.color || '#2563eb' 
                 }}
               >
-                {detailModal.category || 'Agenda Lembaga'}
+                {detailModal.category}
               </span>
               <button 
                 type="button" 
@@ -485,7 +462,6 @@ export default function MonthlyView({
 
             {/* Konten Detail */}
             <div className="p-[18px_20px] flex flex-col gap-3.5">
-              {/* Tombol Kembali */}
               {dayModal && (
                 <button 
                   type="button"
@@ -501,21 +477,21 @@ export default function MonthlyView({
               <div className="flex items-start gap-2.5 text-[0.8rem] text-slate-700">
                 <Clock size={15} className="text-slate-500 shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <strong>Waktu:</strong> {detailModal.time} WIB ({detailModal.duration || '1 jam'})
+                  <strong>Waktu:</strong> {detailModal.time} WIB {detailModal.duration ? `(${detailModal.duration})` : ''}
                 </div>
               </div>
 
               <div className="flex items-start gap-2.5 text-[0.8rem] text-slate-700">
                 <MapPin size={15} className="text-slate-500 shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <strong>Lokasi:</strong> {detailModal.location || 'Ruang Rapat Pimpinan'}
+                  <strong>Lokasi:</strong> {detailModal.location || '-'}
                 </div>
               </div>
 
               <div className="flex items-start gap-2.5 text-[0.8rem] text-slate-700">
                 <User size={15} className="text-slate-500 shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <div><strong>PIC:</strong> {detailModal.pic || 'Sekretariat'}</div>
+                  <div><strong>PIC:</strong> {detailModal.pic || '-'}</div>
                   {detailModal.participants && (
                     <div style={{ color: '#64748b', fontSize: '0.74rem', marginTop: 2 }}>
                       Peserta: {detailModal.participants}

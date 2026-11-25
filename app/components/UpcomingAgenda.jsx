@@ -27,17 +27,11 @@ export default function UpcomingAgenda({ agendas = [], onSelectAgenda }) {
               onClick={() => onSelectAgenda && onSelectAgenda(item)}
             >
               <div className="flex items-start justify-between gap-2 mb-1">
-                <div className="flex items-start gap-2 flex-1">
+                <div className="flex items-start gap-2 flex-1"> 
                   <span className="w-[7px] h-[7px] rounded-full mt-[5px] shrink-0" style={{ backgroundColor: item.color }}></span>
                   <span className="text-[0.8rem] font-bold text-slate-900 leading-[1.25]">{item.title}</span>
                 </div>
-                <span 
-                  className="py-0.5 px-2 rounded-full text-[0.68rem] font-semibold shrink-0"
-                  style={{
-                    backgroundColor: item.color ? `${item.color}18` : '#e2e8f0',
-                    color: item.color || '#475569'
-                  }}
-                >
+                <span className={`py-0.5 px-2 rounded-full text-[0.68rem] font-semibold shrink-0 ${badgeColorClass}`}>
                   {item.category}
                 </span>
               </div>

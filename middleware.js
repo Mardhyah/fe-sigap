@@ -5,15 +5,14 @@ export async function middleware(request) {
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const session = await verifySession(token);
 
+ // Jika belum login
   if (!session) {
-    return NextResponse.redirect(new URL('/auth', request.url));
+    return NextResponse.rewrite(new URL('/dashboard', request.url));
   }
 
   return NextResponse.next();
 }
 
-// Proteksi hanya halaman CMS ('/'); Monitor ('/dashboard'), '/sso', '/auth' tetap bebas akses
 export const config = {
   matcher: ['/'],
 };
-

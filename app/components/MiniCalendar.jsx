@@ -7,34 +7,31 @@ import { MONTHS, DAYS_GRID } from '../../lib/timeUtils';
 export default function MiniCalendar({ agendas = [], selectedDate, onSelectDate }) {
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
-  const [viewMonth, setViewMonth] = useState(today.getMonth()); // 0-indexed
+  const [viewMonth, setViewMonth] = useState(today.getMonth());
 
-  // Tanggal yang dipilih — gunakan selectedDate dari props, atau hari ini
   const activeDate = selectedDate ?? today;
 
-  // Hitung tanggal-tanggal dalam grid kalender
   const calendarDays = useMemo(() => {
     const firstDay = new Date(viewYear, viewMonth, 1);
     const lastDay = new Date(viewYear, viewMonth + 1, 0);
 
-    // Senin = 0, ... Minggu = 6 (sesuai urutan daysOfWeek)
-    const startOffset = (firstDay.getDay() + 6) % 7; // getDay(): 0=Minggu
+    const startOffset = (firstDay.getDay() + 6) % 7;
     const endOffset = (6 - (lastDay.getDay() + 6) % 7) % 7;
 
     const days = [];
-
-    // Isi hari-hari bulan sebelumnya
     const prevMonthLastDay = new Date(viewYear, viewMonth, 0).getDate();
+
+    // Bulan sebelumnya
     for (let i = startOffset - 1; i >= 0; i--) {
       days.push({ num: prevMonthLastDay - i, current: false });
     }
 
-    // Isi hari-hari bulan ini
+    // Bulan aktif
     for (let d = 1; d <= lastDay.getDate(); d++) {
       days.push({ num: d, current: true });
     }
 
-    // Isi hari-hari bulan berikutnya
+    // Bulan berikutnya
     for (let i = 1; i <= endOffset; i++) {
       days.push({ num: i, current: false });
     }
@@ -42,7 +39,7 @@ export default function MiniCalendar({ agendas = [], selectedDate, onSelectDate 
     return days;
   }, [viewYear, viewMonth]);
 
-  // Buat set tanggal yang ada agenda-nya (format: "YYYY-M-D")
+  // Map tanggal agenda
   const agendaDatesMap = useMemo(() => {
     const map = {};
     agendas.forEach((a) => {
@@ -79,7 +76,6 @@ export default function MiniCalendar({ agendas = [], selectedDate, onSelectDate 
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-[1.2rem] mb-[1.2rem] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
-      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="leading-[1.25]">
           <div className="text-[0.95rem] font-bold text-slate-900">Kalender</div>

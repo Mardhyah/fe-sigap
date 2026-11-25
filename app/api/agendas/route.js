@@ -2,25 +2,22 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { api, errorResponse, extractList } from '@/lib/api';
 import { SESSION_COOKIE, verifySession } from '@/lib/auth';
-import { mapRowToAgenda, mapAgendaToRow } from '@/lib/agendaMapper';
+import { mapRowToAgenda } from '@/lib/agendaMapper';
+
+
 
 export async function GET(request) {
   try {
     const token = cookies().get(SESSION_COOKIE)?.value;
     const session = await verifySession(token);
 
-    const userLogin = session?.email || process.env.SSO_USER_ID || '';
-    const key = session?.key || process.env.SSO_KEY || '';
-
-    const requestedId = request?.nextUrl?.searchParams?.get('id') || '';
+    const userLogin = session?.email || process.env.SSO_USER_ID;
+    const key = session?.key || process.env.SSO_KEY;
 
     const query = new URLSearchParams({
       user_login: userLogin,
-      id_history: requestedId,
-      key: key,
-      user_login: session?.email || process.env.SSO_USER_ID,
       id_history: '',
-      key: session?.key || process.env.SSO_KEY,
+      key: key,
     });
 
     const json = await api.get(`/agenda?${query.toString()}`);
@@ -30,6 +27,8 @@ export async function GET(request) {
     return errorResponse(error);
   }
 }
+
+
 
 export async function POST(request) {
   try {
@@ -52,32 +51,24 @@ export async function POST(request) {
       );
     }
 
-    // Normalisasi jam ke format HH:MM
-    const normalizeTimeForApi = (t) => {
-      if (!t) return '';
-      const m = String(t).match(/(\d{1,2})[:.](\d{2})/);
-      if (!m) return String(t);
-      return `${m[1].padStart(2, '0')}:${m[2]}`;
-    };
-
     const startTime = normalizeTimeForApi(body.startTime || body.waktu_mulai);
     const endTime = normalizeTimeForApi(body.endTime || body.waktu_selesai);
     const date = body.date || body.tanggal_kegiatan || new Date().toISOString().split('T')[0];
 
     const formFields = {
-      user_login: session.email || process.env.SSO_USER_ID,
-      key: session.key || process.env.SSO_KEY,
+      user_login: session.email,
+      key: session.key,
       judul_kegiatan: title.trim(),
-      lokasi: body.location?.trim() || body.lokasi?.trim() || '-',
-      longitude: body.longitude || '',
-      latitude: body.latitude || '',
-      id_kat_kegiatan: String(body.idKatKegiatan || body.id_kat_kegiatan || '1'),
-      pic: body.pic?.trim() || '-',
-      peserta: body.participants?.trim() || body.peserta?.trim() || '-',
-      keterangan: body.description?.trim() || body.keterangan?.trim() || '-',
+      id_kat_kegiatan: String(body.idKatKegiatan),
+      tanggal_kegiatan: date,
       waktu_mulai: startTime,
       waktu_selesai: endTime,
-      tanggal_kegiatan: date,
+      lokasi: body.location?.trim(),
+      pic: body.pic?.trim(),
+      peserta: body.participants?.trim(),
+      keterangan: body.description?.trim(),
+      longitude: body.longitude || '',
+      latitude: body.latitude || '',
     };
 
     const json = await api.postForm('/agenda', formFields);
@@ -99,6 +90,8 @@ export async function POST(request) {
     return errorResponse(error);
   }
 }
+
+
 
 export async function PUT(request) {
   try {
@@ -129,33 +122,25 @@ export async function PUT(request) {
       );
     }
 
-    // Normalisasi jam ke format HH:MM
-    const normalizeTimeForApi = (t) => {
-      if (!t) return '';
-      const m = String(t).match(/(\d{1,2})[:.](\d{2})/);
-      if (!m) return String(t);
-      return `${m[1].padStart(2, '0')}:${m[2]}`;
-    };
-
     const startTime = normalizeTimeForApi(body.startTime || body.waktu_mulai);
     const endTime = normalizeTimeForApi(body.endTime || body.waktu_selesai);
     const date = body.date || body.tanggal_kegiatan || new Date().toISOString().split('T')[0];
 
     const formFields = {
-      user_login: session.email || process.env.SSO_USER_ID,
+      user_login: session.email,
+      key: session.key,
       id_history: String(idHistory),
-      key: session.key || process.env.SSO_KEY,
       judul_kegiatan: title.trim(),
-      lokasi: body.location?.trim() || body.lokasi?.trim() || '-',
-      longitude: body.longitude || '',
-      latitude: body.latitude || '',
-      id_kat_kegiatan: String(body.idKatKegiatan || body.id_kat_kegiatan || '1'),
-      pic: body.pic?.trim() || '-',
-      peserta: body.participants?.trim() || body.peserta?.trim() || '-',
-      keterangan: body.description?.trim() || body.keterangan?.trim() || '-',
+      id_kat_kegiatan: String(body.idKatKegiatan),
+      tanggal_kegiatan: date,
       waktu_mulai: startTime,
       waktu_selesai: endTime,
-      tanggal_kegiatan: date,
+      lokasi: body.location?.trim(),
+      pic: body.pic?.trim(),
+      peserta: body.participants?.trim(),
+      keterangan: body.description?.trim(),
+      longitude: body.longitude || '',
+      latitude: body.latitude || '',
     };
 
     const json = await api.putUrlEncoded('/agenda', formFields);
@@ -177,3 +162,45 @@ export async function PUT(request) {
     return errorResponse(error);
   }
 }
+
+export async function DELETE(request) {
+  try {
+    const token = cookies().get(SESSION_COOKIE)?.value;
+    const session = await verifySession(token);
+    if (!session) {
+      return NextResponse.json({ success: false, message: 'Silakan login' }, { status: 401 });
+    }
+
+    const id = request.nextUrl.searchParams.get('id') || request.nextUrl.searchParams.get('id_history');
+    if (!id) {
+      return NextResponse.json({ success: false, message: 'ID agenda wajib diisi' }, { status: 400 });
+    }
+
+    const payload = {
+      user_login: session.email,
+      id_history: String(id),
+      key: session.key,
+    };
+
+    const json = await api.deleteUrlEncoded('/agenda', payload);
+
+    if (json && json.status === false) {
+      return NextResponse.json({ success: false, message: json.message || 'Gagal menghapus agenda' }, { status: 400 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: json?.message || 'Agenda berhasil dihapus',
+    });
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
+
+// jam ke format HH:MM
+const normalizeTimeForApi = (t) => {
+  if (!t) return '';
+  const m = String(t).match(/(\d{1,2})[:.](\d{2})/);
+  if (!m) return String(t);
+  return `${m[1].padStart(2, '0')}:${m[2]}`;
+};

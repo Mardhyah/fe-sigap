@@ -2,14 +2,7 @@ import { Calendar, Clock, MapPin, User, FileText, Pencil } from 'lucide-react';
 
 export default function AgendaDetail({ agenda, onEdit }) {
   if (!agenda) {
-    return (
-      <div className="bg-white border border-slate-200 rounded-xl p-[1.2rem] mb-[1.2rem] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
-        <h4 className="text-[0.95rem] font-bold text-slate-900 mb-[0.9rem]">Detail Agenda</h4>
-        <p className="text-[0.8rem] text-slate-400 text-center py-4 m-0">
-          Pilih atau tambahkan agenda untuk melihat detail
-        </p>
-      </div>
-    );
+    return null;
   }
 
   return (

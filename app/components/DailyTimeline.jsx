@@ -1,8 +1,9 @@
+import { useState, useEffect } from 'react';
 import { getAgendaStatus } from '../../lib/timeUtils';
-import { MapPin, User, Users, MoreVertical, CalendarX } from 'lucide-react';
+import { MapPin, User, Users, MoreVertical, CalendarX, Trash2, Pencil } from 'lucide-react';
 
 const CARD_STYLES = {
-  internal: 'bg-white border-slate-200',
+  internal: 'bg-[#f1f5f9] border-[#e2e8f0]',
   rapat: 'bg-[#eff6ff] border-[#dbeafe]',
   audiensi: 'bg-[#f0fdf4] border-[#dcfce7]',
   program: 'bg-[#fffdf0] border-[#fef3c7]',
@@ -28,7 +29,24 @@ const BADGE_STYLES = {
   evaluasi: 'bg-[#f3e8ff] text-[#7c3aed]'
 };
 
-export default function DailyTimeline({ agendas = [], selectedAgendaId, onSelectAgenda, currentTime }) {
+export default function DailyTimeline({ 
+  agendas = [], 
+  selectedAgendaId, 
+  onSelectAgenda, 
+  onEditAgenda, 
+  onDeleteAgenda, 
+  currentTime 
+}) {
+  const [openMenuId, setOpenMenuId] = useState(null);
+
+  useEffect(() => {
+    const handleClose = () => setOpenMenuId(null);
+    if (openMenuId) {
+      window.addEventListener('click', handleClose);
+      return () => window.removeEventListener('click', handleClose);
+    }
+  }, [openMenuId]);
+
   if (!agendas || agendas.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center flex-1 min-h-[260px] text-slate-400 py-12">
@@ -42,67 +60,43 @@ export default function DailyTimeline({ agendas = [], selectedAgendaId, onSelect
   return (
     <div className="flex flex-col relative w-full flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-2 pb-6">
       {agendas.map((item, index) => {
-        const isSelected = item.id === selectedAgendaId;
-        const isLast = index === agendas.length - 1;
-        const status = currentTime ? getAgendaStatus(item.time, currentTime) : 'upcoming';
+        const isSelected = item.id === selectedAgendaId; // Agenda sedang dipilih
+        const isMenuOpen = openMenuId === item.id; // Menu opsi terbuka
+        const isLast = index === agendas.length - 1; // Item terakhir
+        const status = currentTime ? getAgendaStatus(item.time, currentTime, item.dateKey) : 'upcoming'; // Status waktu
 
-        // Item Istirahat
-        if (item.isBreak) {
-          return (
-            <div key={item.id} className="flex items-stretch relative min-h-[85px] mb-[0.95rem]">
-              {/* Waktu */}
-              <div className="w-[95px] shrink-0 pt-3.5 text-left">
-                <div className="text-[0.88rem] font-bold text-slate-800">{item.time}</div>
-                <div className="text-[0.76rem] text-slate-500 mt-0.5">{item.duration}</div>
-              </div>
+        const cardColorClass = CARD_STYLES[item.categoryType] || CARD_STYLES.internal; // Warna kartu
+        const ongoingBorderClass = status === 'ongoing' ? (ONGOING_BORDER_STYLES[item.categoryType] || '!border-2 !border-[#0a5c36]') : ''; // Border jika jam aktif
+        const badgeColorClass = BADGE_STYLES[item.categoryType] || BADGE_STYLES.internal; // Warna badge kategori
 
-              {/* Indikator */}
-              <div className="w-6 flex flex-col items-center relative shrink-0 mr-3.5">
-                <div className="w-[11px] h-[11px] rounded-full mt-[18px] z-10 shadow-[0_0_0_3px_#ffffff] bg-slate-400"></div>
-                {!isLast && <div className="absolute top-[25px] bottom-[-10px] w-0.5 bg-slate-200"></div>}
-              </div>
-
-              {/* Kotak Istirahat */}
-              <div className={`flex-1 bg-slate-100 rounded-xl p-[0.85rem_1.25rem] flex items-center gap-2.5 ${status === 'ongoing' ? '!border-2 !border-[#64748b]' : ''}`}>
-                <span className="text-[0.88rem] font-semibold text-slate-600">Istirahat</span>
-              </div>
-            </div>
-          );
-        }
-
-        const cardColorClass = CARD_STYLES[item.categoryType] || CARD_STYLES.internal;
-        const ongoingBorderClass = status === 'ongoing' ? (ONGOING_BORDER_STYLES[item.categoryType] || '!border-2 !border-[#0a5c36]') : '';
-        const badgeColorClass = BADGE_STYLES[item.categoryType] || BADGE_STYLES.internal;
-
-        // Item Agenda
+        // Item 
         return (
-          <div key={item.id} className="flex items-stretch relative min-h-[85px] mb-[0.95rem]">
+          <div key={item.id} className={`flex items-stretch relative min-h-[85px] mb-[0.95rem] ${isMenuOpen ? 'z-50' : 'z-0'}`}>
             {/* Waktu */}
             <div className="w-[95px] shrink-0 pt-3.5 text-left">
               <div className="text-[0.88rem] font-bold text-slate-800">{item.time}</div>
               {item.duration ? <div className="text-[0.76rem] text-slate-500 mt-0.5">{item.duration}</div> : null}
             </div>
 
-            {/* Indikator */}
             <div className="w-6 flex flex-col items-center relative shrink-0 mr-3.5">
-              <div 
-                className="w-[11px] h-[11px] rounded-full mt-[18px] z-10 shadow-[0_0_0_3px_#ffffff]" 
+              <div
+                className="w-[11px] h-[11px] rounded-full mt-[18px] z-10 shadow-[0_0_0_3px_#ffffff]"
                 style={{ backgroundColor: item.color }}
               ></div>
               {!isLast && <div className="absolute top-[25px] bottom-[-10px] w-0.5 bg-slate-200"></div>}
             </div>
 
             {/* Kartu */}
-            <div 
-              className={`flex-1 rounded-xl p-[0.85rem_1.25rem] flex items-center justify-between cursor-pointer border transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] ${cardColorClass} ${ongoingBorderClass} ${isSelected ? 'shadow-[0_4px_14px_rgba(15,23,42,0.08)]' : ''}`}
-              onClick={() => onSelectAgenda && onSelectAgenda(item)}
+            <div
+              className={`flex-1 rounded-xl p-[0.85rem_1.25rem] flex items-center justify-between cursor-pointer border transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] ${cardColorClass} ${ongoingBorderClass} ${isSelected ? 'shadow-[0_4px_14px_rgba(15,23,42,0.08)]' : ''} ${isMenuOpen ? 'relative z-50' : ''}`}
+              onClick={() => onSelectAgenda && onSelectAgenda(isSelected ? null : item)}
             >
               {/* Konten */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="text-[0.92rem] font-bold text-slate-900 leading-[1.25]">{item.title}</h3>
                 </div>
-                
+
                 <div className="flex items-center gap-1.5 text-[0.76rem] text-slate-500 mb-1.5">
                   <MapPin size={13} strokeWidth={2.2} />
                   <span>{item.location}</span>
@@ -123,18 +117,56 @@ export default function DailyTimeline({ agendas = [], selectedAgendaId, onSelect
 
               {/* Badge & Aksi */}
               <div className="flex items-center gap-3 shrink-0">
-                <span 
-                  className="py-1 px-3 rounded-full text-[0.74rem] font-semibold"
-                  style={{
-                    backgroundColor: item.color ? `${item.color}18` : '#e2e8f0',
-                    color: item.color || '#475569'
-                  }}
-                >
+                <span className={`py-1 px-3 rounded-full text-[0.74rem] font-semibold ${badgeColorClass}`}>
                   {item.category}
                 </span>
-                <button className="bg-transparent border-0 text-slate-500 cursor-pointer p-1 flex items-center justify-center rounded hover:bg-black/5 hover:text-slate-900" aria-label="Opsi">
-                  <MoreVertical size={16} strokeWidth={2} />
-                </button>
+                <div className="relative">
+                  <button 
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenMenuId(openMenuId === item.id ? null : item.id);
+                    }}
+                    className="bg-transparent border-0 text-slate-500 cursor-pointer p-1.5 flex items-center justify-center rounded-lg hover:bg-black/5 hover:text-slate-900 transition-colors" 
+                    aria-label="Opsi"
+                  >
+                    <MoreVertical size={16} strokeWidth={2} />
+                  </button>
+
+                  {openMenuId === item.id && (
+                    <div 
+                      className="absolute right-0 top-full mt-1.5 w-32 bg-white border border-slate-200 rounded-xl shadow-[0_10px_25px_rgba(0,0,0,0.15)] py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {onEditAgenda && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOpenMenuId(null);
+                            onEditAgenda(item);
+                          }}
+                          className="w-full px-3.5 py-2 text-left text-[0.82rem] text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 border-0 bg-transparent cursor-pointer font-medium transition-colors"
+                        >
+                          <Pencil size={14} className="text-slate-500" />
+                          <span>Edit</span>
+                        </button>
+                      )}
+                      {onDeleteAgenda && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOpenMenuId(null);
+                            onDeleteAgenda(item);
+                          }}
+                          className="w-full px-3.5 py-2 text-left text-[0.82rem] text-red-600 hover:bg-red-50 flex items-center gap-2.5 border-0 bg-transparent cursor-pointer font-semibold transition-colors"
+                        >
+                          <Trash2 size={14} className="text-red-500" />
+                          <span>Hapus</span>
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

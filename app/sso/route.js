@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { api } from '@/lib/api';
-import { SESSION_COOKIE, SESSION_MAX_AGE, signSession, isSecureRequest } from '@/lib/auth';
+import { SESSION_COOKIE, signSession } from '@/lib/auth';
 
 export async function GET(request) {
   const email = request.nextUrl.searchParams.get('email')?.trim();
@@ -9,8 +9,8 @@ export async function GET(request) {
   if (email && key) {
     try {
       const result = await api.postForm('/authentication/sso', {
-        ...(process.env.SSO_USER_ID ? { user_id_statis: process.env.SSO_USER_ID } : {}),
-        ...(process.env.SSO_KEY ? { key_statis: process.env.SSO_KEY } : {}),
+        user_id_statis: process.env.SSO_USER_ID,
+        key_statis: process.env.SSO_KEY,
         email,
         key,
       });
@@ -28,10 +28,7 @@ export async function GET(request) {
 
         response.cookies.set(SESSION_COOKIE, token, {
           httpOnly: true,
-          sameSite: 'lax',
-          secure: isSecureRequest(request),
           path: '/',
-          maxAge: SESSION_MAX_AGE,
         });
 
         return response;
@@ -43,5 +40,5 @@ export async function GET(request) {
     }
   }
 
-  return NextResponse.redirect(new URL('/auth', request.url));
+  return NextResponse.json({ success: false, message: 'Autentikasi SSO gagal' }, { status: 401 });
 }

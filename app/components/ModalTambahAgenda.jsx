@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { calculateDuration, parseStartMinutes, getDateKey } from '../../lib/timeUtils';
+import { calculateDuration, parseStartMinutes } from '../../lib/timeUtils';
 import { X } from 'lucide-react';
 
 const initialFormState = {
@@ -19,15 +19,12 @@ const initialFormState = {
 // Format input jam
 const formatTimeInput = (val) => {
   if (!val) return '';
-  // Maksimal 4 digit
   const digits = val.replace(/\D/g, '').slice(0, 4);
-  if (digits.length <= 2) {
-    return digits;
-  }
+  if (digits.length <= 2) return digits;
   return `${digits.slice(0, 2)}.${digits.slice(2)}`;
 };
 
-// Normalisasi jam saat blur
+// Normalisasi jam
 const normalizeTimeOnBlur = (val) => {
   if (!val) return '';
   const digits = val.replace(/\D/g, '');
@@ -54,7 +51,6 @@ export default function ModalTambahAgenda({
   onClose, 
   onSave, 
   initialCategories = [],
-  defaultDate = new Date(),
   agendaToEdit = null
 }) {
   const [formData, setFormData] = useState(initialFormState);
@@ -70,30 +66,34 @@ export default function ModalTambahAgenda({
   useEffect(() => {
     if (isOpen) {
       if (agendaToEdit) {
-        // Mode Edit: Isi form dengan data agenda yang dipilih
+        // Mode Edit
+        const cleanVal = (val) => (!val || val === '-' ? '' : val);
+        const [timeStart, timeEnd] = agendaToEdit.time ? agendaToEdit.time.split('-') : [];
+
         setFormData({
-          title: agendaToEdit.title || '',
-          idKatKegiatan: agendaToEdit.idKatKegiatan || '',
-          date: agendaToEdit.dateKey || agendaToEdit.tanggalKegiatan || '',
-          startTime: agendaToEdit.waktuMulai ? String(agendaToEdit.waktuMulai).replace(':', '.') : (agendaToEdit.time?.split('-')[0]?.trim() || ''),
-          endTime: agendaToEdit.waktuSelesai ? String(agendaToEdit.waktuSelesai).replace(':', '.') : (agendaToEdit.time?.split('-')[1]?.trim() || ''),
-          location: agendaToEdit.location === '-' ? '' : (agendaToEdit.location || ''),
-          pic: agendaToEdit.pic === '-' ? '' : (agendaToEdit.pic || ''),
-          participants: agendaToEdit.participants === '-' ? '' : (agendaToEdit.participants || ''),
-          description: agendaToEdit.description === '-' ? '' : (agendaToEdit.description || ''),
+          title: agendaToEdit.title,
+          idKatKegiatan: agendaToEdit.idKatKegiatan,
+          date: agendaToEdit.dateKey || agendaToEdit.tanggalKegiatan,
+          startTime: agendaToEdit.waktuMulai ? String(agendaToEdit.waktuMulai).replace(':', '.') : timeStart?.trim(),
+          endTime: agendaToEdit.waktuSelesai ? String(agendaToEdit.waktuSelesai).replace(':', '.') : timeEnd?.trim(),
+          location: cleanVal(agendaToEdit.location),
+          pic: cleanVal(agendaToEdit.pic),
+          participants: cleanVal(agendaToEdit.participants),
+          description: cleanVal(agendaToEdit.description),
         });
       } else {
-        // Mode Tambah: Form bersih kosong
+        // Mode Tambah
         setFormData({
           ...initialFormState,
           date: '',
           startTime: '',
           endTime: '',
-          idKatKegiatan: categories[0]?.id_kat_kegiatan || '',
+          idKatKegiatan: categories[0]?.id_kat_kegiatan,
         });
       }
       setErrors({});
-      // Ambil daftar kategori dari API
+
+      // Ambil kategori
       fetch('/api/categories')
         .then((res) => res.json())
         .then((json) => {
@@ -117,7 +117,6 @@ export default function ModalTambahAgenda({
     const { name, value } = e.target;
 
     if (name === 'startTime' || name === 'endTime') {
-      // Format otomatis
       const formatted = formatTimeInput(value);
       setFormData((prev) => ({ ...prev, [name]: formatted }));
     } else {
@@ -168,26 +167,25 @@ export default function ModalTambahAgenda({
     const calculatedDuration = calculateDuration(start, end);
 
     const catObj = categories.find((c) => c.id_kat_kegiatan === Number(formData.idKatKegiatan));
-    const categoryName = catObj ? catObj.jenis_kegiatan : (categories[0]?.jenis_kegiatan || 'Kegiatan');
-    const selectedKatId = Number(formData.idKatKegiatan) || categories[0]?.id_kat_kegiatan || 1;
+    const categoryName = catObj?.jenis_kegiatan;
+    const selectedKatId = Number(formData.idKatKegiatan);
 
     const agendaPayload = {
       ...(agendaToEdit?.id ? { id: agendaToEdit.id, id_history: agendaToEdit.id } : {}),
       title: formData.title.trim(),
       idKatKegiatan: selectedKatId,
       category: categoryName,
-      categoryType: categoryName.toLowerCase().trim(),
+      categoryType: categoryName?.toLowerCase().trim(),
       startTime: start,
       endTime: end,
       time: timeString,
       duration: calculatedDuration,
-      location: formData.location.trim() || '-',
-      pic: formData.pic.trim() || '-',
-      participants: formData.participants.trim() || '-',
-      description: formData.description.trim() || '-',
+      location: formData.location.trim(),
+      pic: formData.pic.trim(),
+      participants: formData.participants.trim(),
+      description: formData.description.trim(),
       date: formData.date,
       tanggal_kegiatan: formData.date,
-      isBreak: false,
     };
 
     onSave(agendaPayload);
@@ -233,7 +231,6 @@ export default function ModalTambahAgenda({
               name="title"
               value={formData.title}
               onChange={handleChange}
-              placeholder="Contoh: Rapat Koordinasi Humas"
               className={`w-full p-[8px_12px] text-[0.86rem] border border-slate-300 rounded-lg bg-white text-slate-900 outline-none transition-all focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 ${errors.title ? '!border-red-500' : ''}`}
             />
             {errors.title && <span className="text-[0.74rem] text-red-500 mt-0.5">{errors.title}</span>}
@@ -287,7 +284,6 @@ export default function ModalTambahAgenda({
                 value={formData.startTime}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                placeholder="09.00"
                 maxLength={5}
                 className={`flex-1 min-w-0 p-[8px_12px] text-[0.95rem] font-bold text-slate-900 text-center border border-slate-300 rounded-lg bg-white cursor-text transition-all tracking-[0.5px] tabular-nums focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 outline-none ${errors.startTime ? '!border-red-500' : ''}`}
                 aria-label="Ketik jam mulai"
@@ -300,7 +296,6 @@ export default function ModalTambahAgenda({
                 value={formData.endTime}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                placeholder="10.00"
                 maxLength={5}
                 className={`flex-1 min-w-0 p-[8px_12px] text-[0.95rem] font-bold text-slate-900 text-center border border-slate-300 rounded-lg bg-white cursor-text transition-all tracking-[0.5px] tabular-nums focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 outline-none ${errors.endTime ? '!border-red-500' : ''}`}
                 aria-label="Ketik jam selesai"
@@ -318,7 +313,6 @@ export default function ModalTambahAgenda({
               name="location"
               value={formData.location}
               onChange={handleChange}
-              placeholder="Contoh: Ruang Rapat Lt. 2 BAZNAS (BAZIS) DKI Jakarta"
               className="w-full p-[8px_12px] text-[0.86rem] border border-slate-300 rounded-lg bg-white text-slate-900 outline-none transition-all focus:border-brand-green focus:ring-4 focus:ring-brand-green/10"
             />
           </div>
@@ -331,7 +325,6 @@ export default function ModalTambahAgenda({
                 name="pic"
                 value={formData.pic}
                 onChange={handleChange}
-                placeholder="Contoh: Sekretariat"
                 className="w-full p-[8px_12px] text-[0.86rem] border border-slate-300 rounded-lg bg-white text-slate-900 outline-none transition-all focus:border-brand-green focus:ring-4 focus:ring-brand-green/10"
               />
             </div>
@@ -343,7 +336,6 @@ export default function ModalTambahAgenda({
                 name="participants"
                 value={formData.participants}
                 onChange={handleChange}
-                placeholder="Contoh: Ketua, Para Pimpinan"
                 className="w-full p-[8px_12px] text-[0.86rem] border border-slate-300 rounded-lg bg-white text-slate-900 outline-none transition-all focus:border-brand-green focus:ring-4 focus:ring-brand-green/10"
               />
             </div>
@@ -356,7 +348,6 @@ export default function ModalTambahAgenda({
               rows="3"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Catatan tambahan agenda..."
               className="w-full p-[8px_12px] text-[0.86rem] border border-slate-300 rounded-lg bg-white text-slate-900 outline-none transition-all focus:border-brand-green focus:ring-4 focus:ring-brand-green/10 resize-y min-h-[70px]"
             ></textarea>
           </div>
@@ -382,4 +373,3 @@ export default function ModalTambahAgenda({
     </div>
   );
 }
-

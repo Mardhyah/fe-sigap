@@ -201,7 +201,7 @@ export default function DashboardAgenda() {
       />
 
       <div className="flex flex-col lg:flex-row flex-1 w-full lg:h-[calc(100vh-68px)] lg:max-h-[calc(100vh-68px)] bg-[#f0f5fa] p-3 sm:p-4 lg:p-[1.2rem_1.4rem] gap-3 sm:gap-4 lg:gap-[1.4rem] overflow-y-auto lg:overflow-hidden">
-        <Sidebar 
+        <Sidebar
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
         />
@@ -256,7 +256,7 @@ export default function DashboardAgenda() {
 
         {/* Panel kanan */}
         {activeView !== 'bulanan' && (
-          <aside className="w-full lg:w-[350px] xl:w-[370px] shrink-0 flex flex-col gap-4 h-auto lg:h-full lg:max-h-full overflow-y-visible lg:overflow-y-auto overflow-x-hidden lg:pr-1">
+          <aside className="w-full lg:w-[320px] xl:w-[340px] 2xl:w-[360px] shrink-0 flex flex-col gap-3.5 h-auto lg:h-full lg:max-h-full overflow-y-visible lg:overflow-y-auto overflow-x-hidden lg:pr-1">
             <MiniCalendar
               agendas={agendaList}
               selectedDate={selectedDate}

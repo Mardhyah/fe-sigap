@@ -71,30 +71,30 @@ export default function DailyTimeline({
 
         // Item 
         return (
-          <div key={item.id} className={`flex items-stretch relative min-h-[75px] sm:min-h-[85px] mb-[0.85rem] sm:mb-[0.95rem] ${isMenuOpen ? 'z-50' : 'z-0'}`}>
+          <div key={item.id} className={`flex items-start relative mb-2.5 sm:mb-3.5 ${isMenuOpen ? 'z-50' : 'z-0'}`}>
             {/* Waktu */}
-            <div className="w-[72px] sm:w-[95px] shrink-0 pt-2.5 sm:pt-3.5 text-left">
+            <div className="w-[68px] sm:w-[88px] shrink-0 pt-2.5 sm:pt-3 text-left">
               <div className="text-[0.78rem] sm:text-[0.88rem] font-bold text-slate-800 leading-tight">{item.time}</div>
-              {item.duration ? <div className="text-[0.7rem] sm:text-[0.76rem] text-slate-500 mt-0.5">{item.duration}</div> : null}
+              {item.duration ? <div className="text-[0.68rem] sm:text-[0.74rem] text-slate-500 mt-0.5">{item.duration}</div> : null}
             </div>
 
-            <div className="w-4 sm:w-6 flex flex-col items-center relative shrink-0 mr-2 sm:mr-3.5">
+            <div className="w-4 sm:w-6 flex flex-col items-center relative shrink-0 mr-2 sm:mr-3 self-stretch">
               <div
-                className="w-[9px] h-[9px] sm:w-[11px] sm:h-[11px] rounded-full mt-[15px] sm:mt-[18px] z-10 shadow-[0_0_0_3px_#ffffff]"
+                className="w-[9px] h-[9px] sm:w-[11px] sm:h-[11px] rounded-full mt-3.5 sm:mt-4 z-10 shadow-[0_0_0_3px_#ffffff] shrink-0"
                 style={{ backgroundColor: item.color }}
               ></div>
-              {!isLast && <div className="absolute top-[20px] sm:top-[25px] bottom-[-10px] w-0.5 bg-slate-200"></div>}
+              {!isLast && <div className="absolute top-4 bottom-[-14px] w-0.5 bg-slate-200"></div>}
             </div>
 
             {/* Kartu */}
             <div
-              className={`flex-1 rounded-xl p-3 sm:p-[0.85rem_1.25rem] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 cursor-pointer border transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] ${cardColorClass} ${ongoingBorderClass} ${isSelected ? 'shadow-[0_4px_14px_rgba(15,23,42,0.08)]' : ''} ${isMenuOpen ? 'relative z-50' : ''}`}
+              className={`flex-1 rounded-xl p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 sm:gap-3 cursor-pointer border transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] ${cardColorClass} ${ongoingBorderClass} ${isSelected ? 'shadow-[0_4px_14px_rgba(15,23,42,0.08)]' : ''} ${isMenuOpen ? 'relative z-50' : ''}`}
               onClick={() => onSelectAgenda && onSelectAgenda(isSelected ? null : item)}
             >
               {/* Konten */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="text-[0.88rem] sm:text-[0.92rem] font-bold text-slate-900 leading-[1.25]">{item.title}</h3>
+                  <h3 className="text-[0.88rem] sm:text-[0.92rem] font-bold text-slate-900 leading-snug break-words">{item.title}</h3>
                 </div>
 
                 <div className="flex items-center gap-1.5 text-[0.74rem] sm:text-[0.76rem] text-slate-500 mb-1.5">
@@ -102,7 +102,7 @@ export default function DailyTimeline({
                   <span className="truncate">{item.location}</span>
                 </div>
 
-                <div className="flex items-center gap-3 sm:gap-4 text-[0.72rem] sm:text-[0.75rem] text-slate-500 flex-wrap">
+                <div className="flex items-center gap-2.5 sm:gap-3.5 text-[0.72rem] sm:text-[0.75rem] text-slate-500 flex-wrap">
                   <div className="flex items-center gap-1.5">
                     <User size={13} strokeWidth={2} className="shrink-0" />
                     <span>PIC: {item.pic}</span>
@@ -116,8 +116,8 @@ export default function DailyTimeline({
               </div>
 
               {/* Badge & Aksi */}
-              <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 shrink-0 pt-1.5 sm:pt-0 border-t sm:border-t-0 border-slate-200/60">
-                <span className={`py-0.5 sm:py-1 px-2.5 sm:px-3 rounded-full text-[0.7rem] sm:text-[0.74rem] font-semibold ${badgeColorClass}`}>
+              <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 shrink-0 pt-1.5 sm:pt-0 sm:mt-0.5 border-t sm:border-t-0 border-slate-200/60">
+                <span className={`py-0.5 px-2.5 rounded-full text-[0.7rem] sm:text-[0.72rem] font-semibold whitespace-nowrap ${badgeColorClass}`}>
                   {item.category}
                 </span>
                 <div className="relative">

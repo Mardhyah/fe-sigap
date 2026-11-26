@@ -72,3 +72,22 @@ button, input, select, textarea {
 .animate-flow-progress {
   animation: flowProgress 1s cubic-bezier(0.2, 0, 0.4, 1) forwards;
 }
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee 50s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

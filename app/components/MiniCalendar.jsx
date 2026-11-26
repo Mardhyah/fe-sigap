@@ -75,11 +75,11 @@ export default function MiniCalendar({ agendas = [], selectedDate, onSelectDate 
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-3.5 sm:p-[1.2rem] mb-3 sm:mb-[1.2rem] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
-      <div className="flex items-center justify-between mb-4">
-        <div className="leading-[1.25]">
-          <div className="text-[0.95rem] font-bold text-slate-900">Kalender</div>
-          <div className="text-[0.76rem] text-slate-500">{MONTHS[viewMonth]} {viewYear}</div>
+    <div className="bg-white border border-slate-200 rounded-xl p-3.5 sm:p-4 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+      <div className="flex items-center justify-between mb-3">
+        <div className="leading-tight">
+          <div className="text-[0.92rem] sm:text-[0.96rem] font-bold text-slate-900">Kalender</div>
+          <div className="text-[0.75rem] text-slate-500">{MONTHS[viewMonth]} {viewYear}</div>
         </div>
         <div className="flex gap-1.5">
           <button
@@ -87,27 +87,27 @@ export default function MiniCalendar({ agendas = [], selectedDate, onSelectDate 
             className="w-[26px] h-[26px] rounded-md border border-slate-200 bg-white text-slate-600 flex items-center justify-center cursor-pointer transition-all hover:bg-slate-100"
             aria-label="Sebelumnya"
           >
-            <ChevronLeft size={13} strokeWidth={2.5} />
+            <ChevronLeft size={14} strokeWidth={2.5} />
           </button>
           <button
             onClick={nextMonth}
             className="w-[26px] h-[26px] rounded-md border border-slate-200 bg-white text-slate-600 flex items-center justify-center cursor-pointer transition-all hover:bg-slate-100"
             aria-label="Berikutnya"
           >
-            <ChevronRight size={13} strokeWidth={2.5} />
+            <ChevronRight size={14} strokeWidth={2.5} />
           </button>
         </div>
       </div>
 
       {/* Baris Hari */}
-      <div className="grid grid-cols-7 text-center mb-1.5">
+      <div className="grid grid-cols-7 text-center mb-1">
         {DAYS_GRID.map((d) => (
-          <span key={d} className="text-[0.72rem] font-medium text-slate-500 py-0.5">{d}</span>
+          <span key={d} className="text-[0.72rem] font-semibold text-slate-400 py-1">{d}</span>
         ))}
       </div>
 
       {/* Grid Tanggal */}
-      <div className="grid grid-cols-7 gap-0.5">
+      <div className="grid grid-cols-7 gap-1">
         {calendarDays.map((item, idx) => {
           const isToday =
             item.current &&
@@ -132,20 +132,20 @@ export default function MiniCalendar({ agendas = [], selectedDate, onSelectDate 
                 if (!item.current || !onSelectDate) return;
                 onSelectDate(new Date(viewYear, viewMonth, item.num));
               }}
-              className={`h-8 flex flex-col items-center justify-center relative border-0 rounded-full text-[0.8rem] transition-all ${
+              className={`h-7 sm:h-8 flex flex-col items-center justify-center relative border-0 rounded-full text-[0.78rem] sm:text-[0.82rem] transition-all ${
                 isSelected
-                  ? 'bg-blue-600 text-white font-bold'
+                  ? 'bg-blue-600 text-white font-bold shadow-sm'
                   : isToday
                     ? 'bg-blue-50 text-blue-600 font-bold ring-1 ring-blue-300'
                     : !item.current
                       ? 'text-slate-300'
-                      : 'text-slate-900 hover:bg-slate-100 cursor-pointer'
+                      : 'text-slate-800 hover:bg-slate-100 cursor-pointer font-medium'
               }`}
             >
               <span className="leading-none">{item.num}</span>
               {dotColor && !isSelected && (
                 <span
-                  className="absolute bottom-[3px] w-[3.5px] h-[3.5px] rounded-full"
+                  className="absolute bottom-[2.5px] w-[3.5px] h-[3.5px] rounded-full"
                   style={{ backgroundColor: dotColor }}
                 />
               )}

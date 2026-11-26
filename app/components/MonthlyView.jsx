@@ -31,7 +31,6 @@ export default function MonthlyView({
   const [dayModal, setDayModal] = useState(null);
   const [detailModal, setDetailModal] = useState(null);
 
-  // Legenda kategori
   const legendList = useMemo(() => {
     const map = new Map();
     if (categories && categories.length > 0) {
@@ -230,15 +229,13 @@ export default function MonthlyView({
         </div>
       </div>
 
-      {/* Kontainer Kalender Responsif */}
       <div className="flex-1 min-h-0 overflow-auto flex flex-col">
         <div className="min-w-[580px] lg:min-w-0 flex flex-col flex-1">
-          {/* Header Hari */}
           <div className="grid grid-cols-7 bg-slate-50 border-b border-slate-200">
             {DAYS_GRID_LONG.map((name, idx) => (
               <div
                 key={name}
-                className={`p-[8px_4px] sm:p-[10px_8px] text-center text-[0.72rem] sm:text-[0.74rem] font-bold text-slate-600 uppercase tracking-wider border-r border-slate-100 last:border-r-0 ${idx >= 5 ? 'text-red-600 bg-[#fffaf0]' : ''}`}
+                className={`p-[8px_4px] sm:p-[10px_8px] text-center text-[0.72rem] sm:text-[0.74rem] font-bold text-slate-600 uppercase tracking-wider border-r border-slate-100 last:border-r-0 ${idx >= 5 ? 'text-rose-500 bg-[#fff7f7]' : ''}`}
               >
                 <span className="hidden sm:inline">{name}</span>
                 <span className="sm:hidden">{DAYS_GRID_SHORT[idx]}</span>
@@ -246,14 +243,24 @@ export default function MonthlyView({
             ))}
           </div>
 
-          {/* Grid Kalender */}
           <div className="grid grid-cols-7 bg-slate-200 gap-[1px] flex-1 min-h-0 overflow-y-auto">
         {calendarGrid.map((cell, idx) => {
+          const isWeekendCol = idx % 7 === 5 || idx % 7 === 6;
+
           if (!cell.isCurrentMonth) {
             return (
-              <div key={`prev-${idx}`} className="bg-[#fafbfc] opacity-45 min-h-[110px] p-2 flex flex-col gap-1.5 cursor-pointer">
+              <div 
+                key={`prev-${idx}`} 
+                className={`min-h-[110px] p-2 flex flex-col gap-1.5 cursor-pointer ${
+                  isWeekendCol 
+                    ? 'bg-[#fffbfc]/60 bg-[repeating-linear-gradient(135deg,rgba(255,250,250,0.6),rgba(255,250,250,0.6)_8px,rgba(255,241,242,0.3)_8px,rgba(255,241,242,0.3)_16px)] opacity-40' 
+                    : 'bg-[#fafbfc] opacity-45'
+                }`}
+              >
                 <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-[0.8rem] font-semibold text-slate-700 w-6 h-6 flex items-center justify-center rounded-full">{cell.dayNum}</span>
+                  <span className={`text-[0.8rem] font-semibold w-6 h-6 flex items-center justify-center rounded-full ${isWeekendCol ? 'text-rose-300' : 'text-slate-700'}`}>
+                    {cell.dayNum}
+                  </span>
                 </div>
               </div>
             );
@@ -268,19 +275,28 @@ export default function MonthlyView({
             <div
               key={`day-${cell.dayNum}`}
               className={`
-                bg-white min-h-[110px] p-2 flex flex-col gap-1.5 cursor-pointer transition-colors hover:bg-slate-50/70
-                ${cell.isWeekend ? '!bg-[#fffdfc]' : ''} 
-                ${cell.isToday ? '!bg-[#f2fbf6]' : ''} 
+                min-h-[110px] p-2 flex flex-col gap-1.5 cursor-pointer transition-colors
+                ${cell.isWeekend 
+                  ? 'bg-[#fffbfb] bg-[repeating-linear-gradient(135deg,rgba(255,251,251,0.9),rgba(255,251,251,0.9)_8px,rgba(255,238,240,0.4)_8px,rgba(255,238,240,0.4)_16px)] hover:bg-[#fff5f5]' 
+                  : 'bg-white hover:bg-slate-50/70'
+                } 
+                ${cell.isToday ? '!bg-[#f2fbf6] !bg-none' : ''} 
                 ${isSelected ? 'ring-2 ring-inset ring-brand-green' : ''}
               `}
               onClick={() => openDayOverviewModal(cell.dayNum)}
             >
               <div className="flex items-center justify-between mb-0.5">
-                <span className={`text-[0.8rem] font-semibold text-slate-700 w-6 h-6 flex items-center justify-center rounded-full ${cell.isToday ? '!bg-brand-green !text-white font-bold' : ''}`}>
+                <span className={`text-[0.8rem] font-semibold w-6 h-6 flex items-center justify-center rounded-full ${
+                  cell.isToday 
+                    ? '!bg-brand-green !text-white font-bold' 
+                    : cell.isWeekend 
+                      ? 'text-rose-500 font-semibold' 
+                      : 'text-slate-700'
+                }`}>
                   {cell.dayNum}
                 </span>
                 {events.length > 0 && (
-                  <span className="text-[0.64rem] font-semibold text-slate-500 bg-slate-100 py-0.5 px-1.5 rounded-full">
+                  <span className="text-[0.64rem] font-semibold text-slate-500 bg-white/90 border border-slate-200/70 py-0.5 px-1.5 rounded-full shadow-xs">
                     {events.length} agenda
                   </span>
                 )}

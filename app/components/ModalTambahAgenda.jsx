@@ -193,20 +193,20 @@ export default function ModalTambahAgenda({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-[4px] z-[999] flex items-center justify-center p-5" onClick={onClose}>
+    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-[4px] z-[999] flex items-center justify-center p-3 sm:p-5" onClick={onClose}>
       <div
-        className="w-full max-w-[540px] bg-white rounded-[14px] shadow-[0_20px_25px_-5px_rgba(0,0,0,0.12),0_8px_10px_-6px_rgba(0,0,0,0.08)] border border-slate-200 flex flex-col overflow-hidden"
+        className="w-full max-w-[540px] max-h-[92vh] bg-white rounded-[14px] shadow-[0_20px_25px_-5px_rgba(0,0,0,0.12),0_8px_10px_-6px_rgba(0,0,0,0.08)] border border-slate-200 flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
       >
         {/* Header */}
-        <div className="flex items-start justify-between p-[1.25rem_1.5rem_1rem] border-b border-slate-100">
+        <div className="flex items-start justify-between p-4 sm:p-[1.25rem_1.5rem_1rem] border-b border-slate-100 shrink-0">
           <div>
-            <h2 className="text-[1.15rem] font-extrabold text-[#0a1d37] tracking-[-0.3px]">
+            <h2 className="text-[1.05rem] sm:text-[1.15rem] font-extrabold text-[#0a1d37] tracking-[-0.3px]">
               {agendaToEdit ? 'Edit Agenda' : 'Tambah Agenda Baru'}
             </h2>
-            <p className="text-[0.8rem] text-slate-500 mt-0.5">
+            <p className="text-[0.76rem] sm:text-[0.8rem] text-slate-500 mt-0.5">
               {agendaToEdit ? 'Perbarui jadwal dan rincian agenda pimpinan' : 'Masukkan jadwal dan rincian agenda pimpinan BAZNAS (BAZIS) DKI Jakarta'}
             </p>
           </div>
@@ -221,7 +221,7 @@ export default function ModalTambahAgenda({
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-[1.25rem_1.5rem] flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-[1.25rem_1.5rem] flex flex-col gap-3.5 sm:gap-4 overflow-y-auto max-h-[calc(92vh-130px)]">
           <div className="flex flex-col gap-[5px]">
             <label className="text-[0.82rem] font-bold text-slate-700">
               Judul Kegiatan <span className="text-red-500">*</span>
@@ -236,7 +236,7 @@ export default function ModalTambahAgenda({
             {errors.title && <span className="text-[0.74rem] text-red-500 mt-0.5">{errors.title}</span>}
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="flex-1 flex flex-col gap-[5px]">
               <label className="text-[0.82rem] font-bold text-slate-700">
                 Tanggal Kegiatan <span className="text-red-500">*</span>
@@ -317,7 +317,7 @@ export default function ModalTambahAgenda({
             />
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="flex-1 flex flex-col gap-[5px]">
               <label className="text-[0.82rem] font-bold text-slate-700">PIC / Penanggung Jawab</label>
               <input

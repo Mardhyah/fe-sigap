@@ -75,7 +75,7 @@ export default function MiniCalendar({ agendas = [], selectedDate, onSelectDate 
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-[1.2rem] mb-[1.2rem] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+    <div className="bg-white border border-slate-200 rounded-xl p-3.5 sm:p-[1.2rem] mb-3 sm:mb-[1.2rem] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
       <div className="flex items-center justify-between mb-4">
         <div className="leading-[1.25]">
           <div className="text-[0.95rem] font-bold text-slate-900">Kalender</div>

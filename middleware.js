@@ -5,7 +5,7 @@ export async function middleware(request) {
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const session = await verifySession(token);
 
- // Jika belum login
+  // Jika belum login
   if (!session) {
     return NextResponse.rewrite(new URL('/dashboard', request.url));
   }

@@ -15,6 +15,7 @@ import {
 import { DAYS, MONTHS } from '../../lib/timeUtils';
 
 const DAYS_GRID_LONG = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+const DAYS_GRID_SHORT = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
 
 export default function MonthlyView({
   agendas = [],
@@ -181,20 +182,20 @@ export default function MonthlyView({
     <div className="flex flex-col flex-1 min-h-0 h-full bg-white border border-slate-200 rounded-xl overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
       {/* Toolbar */}
       <div 
-        className="p-[12px_20px] bg-white border-b border-slate-200 flex items-center justify-between flex-wrap gap-3"
+        className="p-3 sm:p-[12px_20px] bg-white border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3"
         onWheel={(e) => {
           if (e.deltaY < -20) handlePrevMonth();
           else if (e.deltaY > 20) handleNextMonth();
         }}
       >
-        <div className="flex items-center gap-3">
-          <span className="text-[1.15rem] font-bold text-slate-900 min-w-[150px]">
+        <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+          <span className="text-[1rem] sm:text-[1.15rem] font-bold text-slate-900 min-w-0 sm:min-w-[150px]">
             {MONTHS[viewMonth]} {viewYear}
           </span>
           <div className="flex items-center gap-1">
             <button 
               type="button"
-              className="inline-flex items-center justify-center w-[30px] h-[30px] rounded-md border border-slate-300 bg-white text-slate-600 cursor-pointer transition-all hover:bg-slate-100 hover:border-slate-400 hover:text-slate-900" 
+              className="inline-flex items-center justify-center w-[28px] h-[28px] sm:w-[30px] sm:h-[30px] rounded-md border border-slate-300 bg-white text-slate-600 cursor-pointer transition-all hover:bg-slate-100 hover:border-slate-400 hover:text-slate-900" 
               aria-label="Bulan Sebelumnya"
               onClick={handlePrevMonth}
             >
@@ -202,7 +203,7 @@ export default function MonthlyView({
             </button>
             <button 
               type="button"
-              className="inline-flex items-center justify-center w-[30px] h-[30px] rounded-md border border-slate-300 bg-white text-slate-600 cursor-pointer transition-all hover:bg-slate-100 hover:border-slate-400 hover:text-slate-900" 
+              className="inline-flex items-center justify-center w-[28px] h-[28px] sm:w-[30px] sm:h-[30px] rounded-md border border-slate-300 bg-white text-slate-600 cursor-pointer transition-all hover:bg-slate-100 hover:border-slate-400 hover:text-slate-900" 
               aria-label="Bulan Berikutnya"
               onClick={handleNextMonth}
             >
@@ -211,7 +212,7 @@ export default function MonthlyView({
           </div>
           <button 
             type="button"
-            className="py-1 px-3 text-[0.76rem] font-semibold rounded-md border border-slate-300 bg-white text-slate-700 cursor-pointer transition-all hover:bg-slate-50 hover:text-brand-green hover:border-brand-green" 
+            className="py-1 px-2.5 sm:px-3 text-[0.72rem] sm:text-[0.76rem] font-semibold rounded-md border border-slate-300 bg-white text-slate-700 cursor-pointer transition-all hover:bg-slate-50 hover:text-brand-green hover:border-brand-green" 
             onClick={handleTodayMonth}
           >
             Hari Ini
@@ -219,7 +220,7 @@ export default function MonthlyView({
         </div>
 
         {/* Legenda */}
-        <div className="flex items-center gap-3.5 text-[0.74rem] text-slate-500 flex-wrap">
+        <div className="flex items-center gap-2.5 sm:gap-3.5 text-[0.7rem] sm:text-[0.74rem] text-slate-500 flex-wrap">
           {legendList.map((item) => (
             <div key={item.label} className="flex items-center gap-1.5">
               <span className="w-[7px] h-[7px] rounded-full" style={{ backgroundColor: item.color }}></span>
@@ -229,20 +230,24 @@ export default function MonthlyView({
         </div>
       </div>
 
-      {/* Header Hari */}
-      <div className="grid grid-cols-7 bg-slate-50 border-b border-slate-200">
-        {DAYS_GRID_LONG.map((name, idx) => (
-          <div
-            key={name}
-            className={`p-[10px_8px] text-center text-[0.74rem] font-bold text-slate-600 uppercase tracking-wider border-r border-slate-100 last:border-r-0 ${idx >= 5 ? 'text-red-600 bg-[#fffaf0]' : ''}`}
-          >
-            {name}
+      {/* Kontainer Kalender Responsif */}
+      <div className="flex-1 min-h-0 overflow-auto flex flex-col">
+        <div className="min-w-[580px] lg:min-w-0 flex flex-col flex-1">
+          {/* Header Hari */}
+          <div className="grid grid-cols-7 bg-slate-50 border-b border-slate-200">
+            {DAYS_GRID_LONG.map((name, idx) => (
+              <div
+                key={name}
+                className={`p-[8px_4px] sm:p-[10px_8px] text-center text-[0.72rem] sm:text-[0.74rem] font-bold text-slate-600 uppercase tracking-wider border-r border-slate-100 last:border-r-0 ${idx >= 5 ? 'text-red-600 bg-[#fffaf0]' : ''}`}
+              >
+                <span className="hidden sm:inline">{name}</span>
+                <span className="sm:hidden">{DAYS_GRID_SHORT[idx]}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {/* Grid Kalender */}
-      <div className="grid grid-cols-7 bg-slate-200 gap-[1px] flex-1 min-h-0 overflow-y-auto">
+          {/* Grid Kalender */}
+          <div className="grid grid-cols-7 bg-slate-200 gap-[1px] flex-1 min-h-0 overflow-y-auto">
         {calendarGrid.map((cell, idx) => {
           if (!cell.isCurrentMonth) {
             return (
@@ -321,6 +326,8 @@ export default function MonthlyView({
             </div>
           );
         })}
+          </div>
+        </div>
       </div>
 
       {/* Modal Daftar Agenda */}

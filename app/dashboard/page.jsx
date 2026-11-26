@@ -84,9 +84,9 @@ export default function DashboardMonitorPage() {
   };
 
   return (
-    <div className="w-screen h-screen max-h-screen bg-[#f0f5fa] overflow-hidden flex flex-col">
-      <div className="w-full h-screen max-h-screen p-[1.4rem_2rem] gap-0 overflow-hidden flex flex-1">
-        <main className="w-full max-w-full h-full max-h-full p-[2rem_2.5rem_1rem] rounded-[20px] shadow-[0_4px_20px_-2px_rgba(15,23,42,0.05)] bg-white border border-[#e8ecf2] flex flex-col overflow-hidden">
+    <div className="w-full min-h-screen lg:h-screen lg:max-h-screen bg-[#f0f5fa] overflow-x-hidden lg:overflow-hidden flex flex-col">
+      <div className="w-full flex-1 p-2.5 sm:p-4 lg:p-[1.4rem_2rem] gap-0 flex flex-col min-h-0">
+        <main className="w-full flex-1 p-3.5 sm:p-5 lg:p-[2rem_2.5rem_1rem] rounded-[16px] sm:rounded-[20px] shadow-[0_4px_20px_-2px_rgba(15,23,42,0.05)] bg-white border border-[#e8ecf2] flex flex-col overflow-hidden">
           <AgendaHeader
             currentDate={formattedDate}
             liveClock={liveClockString}

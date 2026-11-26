@@ -8,7 +8,8 @@ import { mapRowToAgenda } from '@/lib/agendaMapper';
 
 export async function GET(request) {
   try {
-    const token = cookies().get(SESSION_COOKIE)?.value;
+    const cookieStore = await cookies();
+    const token = cookieStore.get(SESSION_COOKIE)?.value ?? request.cookies.get(SESSION_COOKIE)?.value;
     const session = await verifySession(token);
 
     const userLogin = session?.email || process.env.SSO_USER_ID;
@@ -32,7 +33,8 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    const token = cookies().get(SESSION_COOKIE)?.value;
+    const cookieStore = await cookies();
+    const token = cookieStore.get(SESSION_COOKIE)?.value ?? request.cookies.get(SESSION_COOKIE)?.value;
     const session = await verifySession(token);
     if (!session) {
       return NextResponse.json(
@@ -95,7 +97,8 @@ export async function POST(request) {
 
 export async function PUT(request) {
   try {
-    const token = cookies().get(SESSION_COOKIE)?.value;
+    const cookieStore = await cookies();
+    const token = cookieStore.get(SESSION_COOKIE)?.value ?? request.cookies.get(SESSION_COOKIE)?.value;
     const session = await verifySession(token);
     if (!session) {
       return NextResponse.json(
@@ -165,7 +168,8 @@ export async function PUT(request) {
 
 export async function DELETE(request) {
   try {
-    const token = cookies().get(SESSION_COOKIE)?.value;
+    const cookieStore = await cookies();
+    const token = cookieStore.get(SESSION_COOKIE)?.value ?? request.cookies.get(SESSION_COOKIE)?.value;
     const session = await verifySession(token);
     if (!session) {
       return NextResponse.json({ success: false, message: 'Silakan login' }, { status: 401 });

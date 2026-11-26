@@ -15,7 +15,6 @@ import { formatIndonesianDate, formatDigitalClock, sortAgendasByTime, getAgendaS
 
 export default function DashboardAgenda() {
   // State
-  const [activeMenu, setActiveMenu] = useState('agenda-lembaga');
   const [activeView, setActiveView] = useState('harian');
   const [agendaList, setAgendaList] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -30,6 +29,7 @@ export default function DashboardAgenda() {
   const [currentTime, setCurrentTime] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Notifikasi
   const showToast = (type, message) => {
@@ -184,11 +184,12 @@ export default function DashboardAgenda() {
   };
 
   return (
-    <div className="w-screen h-screen max-h-screen flex flex-col bg-[#f0f5fa] overflow-hidden">
+    <div className="w-full min-h-screen lg:h-screen lg:max-h-screen flex flex-col bg-[#f0f5fa] overflow-x-hidden lg:overflow-hidden">
       <Navbar
         agendas={agendaList}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
         onSelectAgenda={(agenda) => {
           if (agenda.dateKey) {
             const [y, m, d] = agenda.dateKey.split('-').map(Number);
@@ -199,11 +200,14 @@ export default function DashboardAgenda() {
         }}
       />
 
-      <div className="flex flex-1 w-full h-[calc(100vh-68px)] max-h-[calc(100vh-68px)] bg-[#f0f5fa] p-[1.2rem_1.4rem] gap-[1.4rem] overflow-hidden">
-        <Sidebar activeMenu={activeMenu} onSelectMenu={setActiveMenu} />
+      <div className="flex flex-col lg:flex-row flex-1 w-full lg:h-[calc(100vh-68px)] lg:max-h-[calc(100vh-68px)] bg-[#f0f5fa] p-3 sm:p-4 lg:p-[1.2rem_1.4rem] gap-3 sm:gap-4 lg:gap-[1.4rem] overflow-y-auto lg:overflow-hidden">
+        <Sidebar 
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+        />
 
         {/* Konten utama */}
-        <main className="flex-1 bg-white rounded-2xl border border-[#e8ecf2] shadow-[0_1px_3px_rgba(15,23,42,0.03)] p-[1.8rem_2.2rem_1rem] min-w-0 flex flex-col h-full max-h-full overflow-hidden">
+        <main className="flex-1 bg-white rounded-xl sm:rounded-2xl border border-[#e8ecf2] shadow-[0_1px_3px_rgba(15,23,42,0.03)] p-4 sm:p-6 lg:p-[1.8rem_2.2rem_1rem] min-w-0 flex flex-col min-h-[480px] lg:h-full lg:max-h-full overflow-hidden">
           <AgendaHeader
             currentDate={formattedDate}
             liveClock={liveClockString}
@@ -252,7 +256,7 @@ export default function DashboardAgenda() {
 
         {/* Panel kanan */}
         {activeView !== 'bulanan' && (
-          <aside className="w-[370px] shrink-0 flex flex-col h-full max-h-full overflow-y-auto overflow-x-hidden pr-1">
+          <aside className="w-full lg:w-[350px] xl:w-[370px] shrink-0 flex flex-col gap-4 h-auto lg:h-full lg:max-h-full overflow-y-visible lg:overflow-y-auto overflow-x-hidden lg:pr-1">
             <MiniCalendar
               agendas={agendaList}
               selectedDate={selectedDate}
